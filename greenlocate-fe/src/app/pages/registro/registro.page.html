@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>registro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="centrado">
+    <ion-img src="assets/Registro.svg"></ion-img>
+    <br/>
+  </div>
+  <ion-item>
+    <ion-input label="Rut"
+    labelPlacement="floating"
+    placeholder="Ingrese su rut"></ion-input>
+  </ion-item>
+<ion-item>
+  <ion-input label="Nombre"
+  labelPlacement="floating"
+  placeholder="Ingrese su nombre"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-input label="Apellido"
+  labelPlacement="floating"
+  placeholder="Ingrese su apellido"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-input label="Correo"
+  labelPlacement="floating"
+  placeholder="Ingrese su correo"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-input label="Contraseña"
+  labelPlacement="floating"
+  placeholder="Ingrese su contraseña"></ion-input>
+</ion-item>
+  <ion-button (click)="registrarse()" expand="block" class="ion-margin-top">Registrarse</ion-button>
+  <ion-button (click)="salir()" expand="block" class="ion-margin-top">salir</ion-button>
+</ion-content>
+

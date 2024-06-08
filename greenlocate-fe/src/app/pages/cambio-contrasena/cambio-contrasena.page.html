@@ -1,0 +1,28 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>cambio_contrasena</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="centrado">
+    <ion-img src="assets/cambiocontrasena.svg"></ion-img>
+    <br/>
+  </div>
+  <ion-item>
+    <ion-input label="Rut"
+    labelPlacement="floating"
+    placeholder="Ingrese su rut"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Contraseña actual"
+    labelPlacement="floating"
+    placeholder="Ingrese su contraseña actual"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Nueva contraseña"
+    labelPlacement="floating"
+    placeholder="Ingrese su nueva contraseña"></ion-input>
+  </ion-item>
+  <ion-button (click)="cambiocontrasena()" expand="block" class="ion-margin-top">Cambiar contrseña</ion-button>
+</ion-content>

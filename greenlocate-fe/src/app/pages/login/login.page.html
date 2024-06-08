@@ -5,22 +5,30 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <div class="centrado">
-    <ion-img src="assets/icono.svg"></ion-img>
-    <br/>
-  </div>
-  <ion-item>
-    <ion-input [(ngModel)]="mdl_rut" label="Rut"
-    labelPlacement="floating"
-    placeholder="Ingrese su rut"></ion-input>
-  </ion-item>
+  <form (ngSubmit)="login()">
+    <div class="centrado">
+      <ion-img src="assets/icono.svg"></ion-img>
+      <br/>
+    </div>
+    <ion-item>
+      <ion-input 
+      [(ngModel)]="username" 
+      name="username"
+      label="Rut"
+      labelPlacement="floating"
+      placeholder="Ingrese su rut"></ion-input>
+    </ion-item>
 
-  <ion-item class="ion-margin-top">
-    <ion-input type="password"  [(ngModel)]="mdl_contrasena" label="Contraseña" 
-    labelPlacement="floating"
-    placeholder="Ingrese su contraseña"></ion-input>
-  </ion-item>
+    <ion-item class="ion-margin-top">
+      <ion-input type="password"  
+      [(ngModel)]="password"
+      name="password"
+      label="Contraseña" 
+      labelPlacement="floating"
+      placeholder="Ingrese su contraseña"></ion-input>
+    </ion-item>
 
-  <ion-button (click)="ingresar()" expand="block" class="ion-margin-top">Ingresar</ion-button>
-  <ion-button (click)="crearusuario()" expand="block" class="ion-margin-top">Crear Usuario</ion-button>
+    <ion-button type="submit" expand="block" class="ion-margin-top">Ingresar</ion-button>
+    <ion-button (click)="crearusuario()" expand="block" class="ion-margin-top">Crear Usuario</ion-button>
+  </form>
 </ion-content>

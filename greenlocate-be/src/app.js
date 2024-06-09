@@ -24,6 +24,13 @@ app.post('/get_pass', async (req, res) => {
     res.json(rows)
   })
 
+app.post('/get_user', async (req, res) => {
+    const { user } = req.body
+    const INSERT_QUERY = 'SELECT Rut FROM greenlocate.usuario WHERE Rut = ?';
+    const [rows] = await pool.query(INSERT_QUERY, [user])
+    res.json(rows)
+  })
+
 app.get('/get_data_usuarios', async (req, res) => {
     const [rows] = await pool.query('SELECT * FROM usuario')
     res.json(rows)

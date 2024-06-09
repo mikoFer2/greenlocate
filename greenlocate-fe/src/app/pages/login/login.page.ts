@@ -25,10 +25,9 @@ export class LoginPage {
 
   async login() {
     const response = await this.taskService.getPass(this.username );
-    console.log("mi response: ", response.Contrasena)
-    
-    //falta validar si existe usuario y el manejo de errores
-    if (this.password === response.Contrasena) {
+    const validaUsuario = await this.taskService.getUser(this.username );
+
+    if (this.username === validaUsuario.Rut && this.password === response.Contrasena) {
       this.router.navigate(['/inicio']);
     } else {
       const alert = await this.alertController.create({

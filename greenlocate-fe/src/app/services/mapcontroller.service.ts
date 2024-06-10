@@ -16,12 +16,12 @@ export class MapControllerService {
   }
 
   async getPass(user: string) {
-    const response = await axios.post(`${this.baseUrl}/get_pass`, { user });
+    const response = await axios.post(`${this.baseUrl}/api/get_pass`, { user });
     return response.data[0];
   }
 
   async getUser(user: string) {
-    const response = await axios.post(`${this.baseUrl}/get_user`, { user });
+    const response = await axios.post(`${this.baseUrl}/api/get_user`, { user });
     return response.data[0];
   }
 

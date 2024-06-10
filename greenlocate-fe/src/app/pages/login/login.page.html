@@ -5,15 +5,14 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <form (ngSubmit)="login()">
+  <form [formGroup]="form" (ngSubmit)="login()">
     <div class="centrado">
       <ion-img src="assets/icono.svg"></ion-img>
       <br/>
     </div>
     <ion-item>
       <ion-input 
-      [(ngModel)]="username" 
-      name="username"
+      formControlName="username"
       label="Rut"
       labelPlacement="floating"
       placeholder="Ingrese su rut"></ion-input>
@@ -21,14 +20,19 @@
 
     <ion-item class="ion-margin-top">
       <ion-input type="password"  
-      [(ngModel)]="password"
-      name="password"
+      formControlName="password"
       label="Contraseña" 
       labelPlacement="floating"
       placeholder="Ingrese su contraseña"></ion-input>
     </ion-item>
 
-    <ion-button type="submit" expand="block" class="ion-margin-top">Ingresar</ion-button>
+    <div *ngIf="form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)">
+      <ion-text color="danger" *ngIf="form.controls['password'].errors?.['required']">
+        La contraseña es requerida.
+      </ion-text>
+    </div>
+
+    <ion-button type="submit" expand="block" [disabled]="form.invalid" class="ion-margin-top">Ingresar</ion-button>
     <ion-button (click)="crearusuario()" expand="block" class="ion-margin-top">Crear Usuario</ion-button>
   </form>
 </ion-content>

@@ -17,6 +17,24 @@ app.get('/get_data_area_verde', async (req, res) => {
   res.json(rows)
 })
 
+app.post('/api/get_pass', async (req, res) => {
+  try {
+    const { user } = req.body
+    const INSERT_QUERY = 'SELECT Contrasena FROM usuario WHERE rut = ?';
+    const data = await pool.query(INSERT_QUERY, [user])
+      
+    if (data[0].length === 0) {
+        // Simulando un error cuando no hay datos en la base de datos
+        throw new Error('No se encontraron datos en la base de datos.');
+    }
+    res.json(data[0]);
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message);
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message });
+  }
+});
+
 app.post('/get_pass', async (req, res) => {
     const { user } = req.body
     const INSERT_QUERY = 'SELECT Contrasena FROM usuario WHERE rut = ?';
@@ -24,12 +42,22 @@ app.post('/get_pass', async (req, res) => {
     res.json(rows)
   })
 
-app.post('/get_user', async (req, res) => {
+app.post('/api/get_user', async (req, res) => {
+  try {
     const { user } = req.body
     const INSERT_QUERY = 'SELECT Rut FROM greenlocate.usuario WHERE Rut = ?';
-    const [rows] = await pool.query(INSERT_QUERY, [user])
-    res.json(rows)
-  })
+    const data = await pool.query(INSERT_QUERY, [user])
+      
+    if (data[0].length === 0) {
+        // Simulando un error cuando no hay datos en la base de datos
+        throw new Error('No se encontraron datos en la base de datos.');
+    }
+    res.json(data[0]);
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message);
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message });
+  }
+})
 
 app.get('/get_data_usuarios', async (req, res) => {
     const [rows] = await pool.query('SELECT * FROM usuario')

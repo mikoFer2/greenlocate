@@ -21,8 +21,7 @@ export class LoginPage {
     private router: Router,
     private taskService: MapControllerService,
     private alertController: AlertController
-  ) 
-  { 
+  ) { 
     this.form = this.formBuilder.group({
       password: ['', [Validators.required]],
       username: ['', [Validators.required]]

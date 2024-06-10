@@ -15,6 +15,17 @@ export class MapControllerService {
     return response.data[0];
   }
 
+  async registeUser(dataToSend: any) {
+    try
+    {
+      const response = await axios.post(`${this.baseUrl}/api/register_user`, dataToSend);
+      return response.data;
+    } catch (error) {
+      return {status: 'NOK'}
+    }
+    
+  }
+
   async getPass(user: string) {
     const response = await axios.post(`${this.baseUrl}/api/get_pass`, { user });
     return response.data[0];

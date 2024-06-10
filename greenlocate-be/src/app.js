@@ -13,8 +13,44 @@ app.use(bodyParser.json());
 
 //acá se crean las acciones a bbdd
 app.get('/get_data_area_verde', async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM area_verde')
-  res.json(rows)
+  const [rows] = await pool.query('SELECT * FROM area_verde');
+  res.json(rows);
+})
+
+app.post('/api/register_user', async (req, res) => {
+  try {
+    const dataToRegister = {
+      rut: req.body.rut,
+      nombre: req.body.nombre,
+      apellido: req.body.apellido,
+      tipo: "n/a",
+      correo: req.body.email,
+      contrasena: req.body.contrasena,
+      idArea: "1111"
+    };
+
+    const INSERT_QUERY = 'INSERT INTO `usuario` (`Rut`, `Nombre`, `Apellido`, `Tipo`, `Correo`,`Contrasena`,`Id_area`) VALUES (?,?,?,?,?,?,?)'
+
+    const data = await pool.query(INSERT_QUERY, [
+      dataToRegister.rut, 
+      dataToRegister.nombre,
+      dataToRegister.apellido,
+      dataToRegister.tipo,
+      dataToRegister.correo,
+      dataToRegister.contrasena,
+      dataToRegister.idArea
+    ])
+
+    res.json({
+      data,
+      status: 'OK',
+      message: 'Usuario, ' + dataToRegister.nombre + ' registrado correctamente!'
+    })
+
+  }catch (error){
+    console.error('Error al obtener datos de la base de datos:', error.message);
+    res.status(409).json({ message: 'Error al obtener datos de la base de datos.', error: error.message });
+  }
 })
 
 app.post('/api/get_pass', async (req, res) => {
@@ -56,6 +92,7 @@ app.post('/api/get_user', async (req, res) => {
   } catch (error) {
       console.error('Error al obtener datos de la base de datos:', error.message);
       res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message });
+    
   }
 })
 

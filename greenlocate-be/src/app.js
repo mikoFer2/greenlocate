@@ -96,6 +96,11 @@ app.post('/api/get_user', async (req, res) => {
   }
 })
 
+app.get('/get_data_usuarios', async (req, res) => {
+    const [rows] = await pool.query('SELECT * FROM usuario')
+    res.json(rows)
+  })
+
 app.get('/show_tables', async (req, res) => {
   const result = await pool.query('SHOW TABLES')
   res.json(result)

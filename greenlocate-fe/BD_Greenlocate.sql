@@ -353,7 +353,7 @@ CREATE TABLE `columpio` (
 
 CREATE TABLE `comentario` (
   `Id_comentario` varchar(12) NOT NULL,
-  `Fecha` date NOT NULL,
+  `Comentario` varchar(500) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -540,7 +540,7 @@ CREATE TABLE `resbalin` (
 
 CREATE TABLE `resenia` (
   `Id_resenia` varchar(12) NOT NULL,
-  `Fecha` date NOT NULL,
+  `Calificacion` int(2) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 

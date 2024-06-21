@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-05-2024 a las 05:16:37
+-- Tiempo de generación: 18-06-2024 a las 02:39:55
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -33,7 +33,7 @@ CREATE TABLE `area_verde` (
   `Id_area` varchar(10) NOT NULL,
   `Tipo` varchar(6) NOT NULL,
   `Tamano` int(6) NOT NULL,
-  `Estado` varchar(6) NOT NULL,
+  `Estado` varchar(10) NOT NULL,
   `Longitud` varchar(10) NOT NULL,
   `Latitud` varchar(10) NOT NULL,
   `Id_unidad_vecinal` varchar(10) NOT NULL
@@ -99,7 +99,7 @@ INSERT INTO `area_verde` (`Id_area`, `Tipo`, `Tamano`, `Estado`, `Longitud`, `La
 ('ES-02', '', 0, '', '-70.742176', '-33.367058', 'ES'),
 ('ES-03', '', 0, '', '-70.74292', '-33.368525', 'ES'),
 ('ESM-01', '', 0, '', '-70.727249', '-33.368604', 'ESM'),
-('EST-01', '', 0, '', '-70.748995', '-33.366218', 'EST'),
+('EST-01', 'parque', 47655, 'regular', '-70.748995', '-33.366218', 'EST'),
 ('ESTCOL-01', '', 0, '', '-70.712464', '-33.369364', 'ESTCOL'),
 ('EUG-01', '', 0, '', '-70.71994', '-33.367556', 'EUG'),
 ('FAS-01', '', 0, '', '-70.714288', '-33.364655', 'FAS'),
@@ -158,7 +158,7 @@ INSERT INTO `area_verde` (`Id_area`, `Tipo`, `Tamano`, `Estado`, `Longitud`, `La
 ('LCDQ-02', '', 0, '', '-70.73885', '-33.356813', 'LCDQ'),
 ('LCIP-01', '', 0, '', '-70.751155', '-33.369557', 'LCIP'),
 ('LCRU-01', '', 0, '', '-70.719416', '-33.358131', 'LCRU'),
-('LE-01', '', 0, '', '-70.737135', '-33.362763', 'LE'),
+('LE-01', 'plaza', 2050, 'bueno', '-70.737135', '-33.362763', 'LE'),
 ('LE-02', '', 0, '', '-70.743533', '-33.36224', 'LE'),
 ('LF-01', '', 0, '', '-70.749661', '-33.369115', 'LF'),
 ('LF-02', '', 0, '', '-70.748107', '-33.368377', 'LF'),
@@ -172,7 +172,7 @@ INSERT INTO `area_verde` (`Id_area`, `Tipo`, `Tamano`, `Estado`, `Longitud`, `La
 ('LJAR-02', '', 0, '', '-70.716347', '-33.35481', 'LJAR'),
 ('LJAR-03', '', 0, '', '-70.716293', '-33.356395', 'LJAR'),
 ('LJAR-04', '', 0, '', '-70.720534', '-33.356381', 'LJAR'),
-('LJAR-05', '', 0, '', '-70.715411', '-33.356601', 'LJAR'),
+('LJAR-05', 'plaza', 750, 'bueno', '-70.715411', '-33.356601', 'LJAR'),
 ('LJAR-06', '', 0, '', '-70.718391', '-33.356891', 'LJAR'),
 ('LJAR-07', '', 0, '', '-70.716579', '-33.358004', 'LJAR'),
 ('LJAR-08', '', 0, '', '-70.71732', '-33.358719', 'LJAR'),
@@ -219,7 +219,7 @@ INSERT INTO `area_verde` (`Id_area`, `Tipo`, `Tamano`, `Estado`, `Longitud`, `La
 ('P-02', '', 0, '', '-70,752595', '-33,365536', 'P'),
 ('P-03', '', 0, '', '-70,749895', '-33,36568', 'P'),
 ('PALE-01', '', 0, '', '-70,712893', '-33,365965', 'PALE'),
-('PARM-01', '', 0, '', '-70,7316', '-33,367772', 'PARM'),
+('PARM-01', 'plaza', 5704, 'excelente', '-70,7316', '-33,367772', 'PARM'),
 ('PC-01', '', 0, '', '-70,742259', '-33,359984', 'PC'),
 ('PC-02', '', 0, '', '-70,739998', '-33,359678', 'PC'),
 ('PC-03', '', 0, '', '-70,743188', '-33,360947', 'PC'),
@@ -251,8 +251,8 @@ INSERT INTO `area_verde` (`Id_area`, `Tipo`, `Tamano`, `Estado`, `Longitud`, `La
 ('PROJ-01', '', 0, '', '-70,717355', '-33,361475', 'PROJ'),
 ('PROJ-02', '', 0, '', '-70,718669', '-33,362694', 'PROJ'),
 ('PROJ-03', '', 0, '', '-70,717227', '-33,364156', 'PROJ'),
-('REC-01', '', 0, '', '-70,72391', '-33,368413', 'REC'),
-('SE-01', '', 0, '', '-70,747318', '-33,364462', 'SE'),
+('REC-01', 'plaza', 18319, 'bueno', '-70,72391', '-33,368413', 'REC'),
+('SE-01', 'plaza', 1971, 'bueno', '-70,747318', '-33,364462', 'SE'),
 ('SE-02', '', 0, '', '-70,743345', '-33,363525', 'SE'),
 ('SE-03', '', 0, '', '-70,743997', '-33,362574', 'SE'),
 ('SE-04', '', 0, '', '-70,744424', '-33,361994', 'SE'),
@@ -302,9 +302,21 @@ INSERT INTO `area_verde` (`Id_area`, `Tipo`, `Tamano`, `Estado`, `Longitud`, `La
 
 CREATE TABLE `asiento` (
   `Id_asiento` varchar(6) NOT NULL,
-  `Estado` varchar(6) NOT NULL,
+  `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `asiento`
+--
+
+INSERT INTO `asiento` (`Id_asiento`, `Estado`, `Id_area`) VALUES
+('1', 'bueno', 'EST-01'),
+('2', 'bueno', 'SE-01'),
+('3', 'excelente', 'PARM-01'),
+('4', 'regular', 'REC-01'),
+('5', 'bueno', 'LJAR-05'),
+('6', 'malo', 'LE-01');
 
 -- --------------------------------------------------------
 
@@ -314,9 +326,19 @@ CREATE TABLE `asiento` (
 
 CREATE TABLE `balancin` (
   `Id_balancin` varchar(6) NOT NULL,
-  `Estado` varchar(6) NOT NULL,
+  `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `balancin`
+--
+
+INSERT INTO `balancin` (`Id_balancin`, `Estado`, `Id_area`) VALUES
+('1', 'excelente', 'SE-01'),
+('2', 'bueno', 'REC-01'),
+('3', 'regular', 'LJAR-05'),
+('4', 'bueno', 'LE-01');
 
 -- --------------------------------------------------------
 
@@ -329,9 +351,19 @@ CREATE TABLE `cancha` (
   `Nombre` varchar(20) NOT NULL,
   `Tipo` varchar(10) NOT NULL,
   `Metros_Cuadrados` int(6) NOT NULL,
-  `Estado` varchar(6) NOT NULL,
+  `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `cancha`
+--
+
+INSERT INTO `cancha` (`Id_cancha`, `Nombre`, `Tipo`, `Metros_Cuadrados`, `Estado`, `Id_area`) VALUES
+('1', 'san enrique', 'cemento', 530, 'bueno', 'SE-01'),
+('2', 'recsa', 'cemento', 419, 'bueno', 'REC-01'),
+('3', 'estadio municipal', 'pasto', 7260, 'malo', 'EST-01'),
+('4', 'los esteros', 'cemento', 488, 'regular', 'LE-01');
 
 -- --------------------------------------------------------
 
@@ -341,9 +373,19 @@ CREATE TABLE `cancha` (
 
 CREATE TABLE `columpio` (
   `Id_columpio` varchar(6) NOT NULL,
-  `Estado` varchar(6) NOT NULL,
+  `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `columpio`
+--
+
+INSERT INTO `columpio` (`Id_columpio`, `Estado`, `Id_area`) VALUES
+('1', 'bueno', 'SE-01'),
+('2', 'regular', 'REC-01'),
+('3', 'bueno', 'LJAR-05'),
+('4', 'malo', 'LE-01');
 
 -- --------------------------------------------------------
 
@@ -356,6 +398,14 @@ CREATE TABLE `comentario` (
   `Comentario` varchar(500) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `comentario`
+--
+
+INSERT INTO `comentario` (`Id_comentario`, `Comentario`, `Id_area`) VALUES
+('1', 'Plaza bien cuidada, los arcos de la cancha estan rotos', 'SE-01'),
+('2', 'Tiene varias plantas, pero solo tiene asientos, no hay nada mas', 'PARM-01');
 
 -- --------------------------------------------------------
 
@@ -435,9 +485,19 @@ INSERT INTO `comuna` (`Id_comuna`, `Nombre`, `Id_provincia`) VALUES
 
 CREATE TABLE `maquina_ejercicio` (
   `Id_maquina` varchar(6) NOT NULL,
-  `Estado` varchar(6) NOT NULL,
+  `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `maquina_ejercicio`
+--
+
+INSERT INTO `maquina_ejercicio` (`Id_maquina`, `Estado`, `Id_area`) VALUES
+('1', 'excelente', 'SE-01'),
+('2', 'excelente', 'REC-01'),
+('3', 'bueno', 'LJAR-05'),
+('4', 'excelente', 'LE-01');
 
 -- --------------------------------------------------------
 
@@ -451,6 +511,13 @@ CREATE TABLE `mesa_ping_pong` (
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+--
+-- Volcado de datos para la tabla `mesa_ping_pong`
+--
+
+INSERT INTO `mesa_ping_pong` (`Id_mesa`, `Estado`, `Id_area`) VALUES
+('1', 'excelente', 'SE-01');
+
 -- --------------------------------------------------------
 
 --
@@ -459,9 +526,16 @@ CREATE TABLE `mesa_ping_pong` (
 
 CREATE TABLE `pileta` (
   `Id_pileta` varchar(6) NOT NULL,
-  `Estado` varchar(6) NOT NULL,
+  `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `pileta`
+--
+
+INSERT INTO `pileta` (`Id_pileta`, `Estado`, `Id_area`) VALUES
+('1', 'malo', 'PARM-01');
 
 -- --------------------------------------------------------
 
@@ -528,9 +602,19 @@ INSERT INTO `region` (`Id_region`, `Nombre`) VALUES
 
 CREATE TABLE `resbalin` (
   `Id_resbalin` varchar(6) NOT NULL,
-  `Estado` varchar(6) NOT NULL,
+  `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `resbalin`
+--
+
+INSERT INTO `resbalin` (`Id_resbalin`, `Estado`, `Id_area`) VALUES
+('1', 'malo', 'SE-01'),
+('2', 'bueno', 'REC-01'),
+('3', 'bueno', 'LJAR-05'),
+('4', 'bueno', 'LE-01');
 
 -- --------------------------------------------------------
 
@@ -543,6 +627,14 @@ CREATE TABLE `resenia` (
   `Calificacion` int(2) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `resenia`
+--
+
+INSERT INTO `resenia` (`Id_resenia`, `Calificacion`, `Id_area`) VALUES
+('1', 4, 'SE-01'),
+('2', 5, 'SE-01');
 
 -- --------------------------------------------------------
 

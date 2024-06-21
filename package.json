@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@awesome-cordova-plugins/geolocation": "^6.7.0",
+    "@awesome-cordova-plugins/native-geocoder": "^6.7.0",
+    "cordova-plugin-geolocation": "^5.0.0",
+    "cordova-plugin-nativegeocoder": "^3.5.1"
+  }
+}

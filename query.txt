@@ -1,0 +1,22 @@
+querys
+
+Perfil
+
+SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario;
+
+Comentario
+
+SELECT
+    com.id_comentario,
+    com.comentario,
+    uv.nombre,
+    ar.id_area
+FROM
+    comentario com JOIN area_verde ar ON com.id_area = ar.id_area
+    join unidad_vecinal uv on uv.id_unidad_vecinal = ar.id_unidad_vecinal;

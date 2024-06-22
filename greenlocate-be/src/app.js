@@ -17,6 +17,33 @@ app.get('/get_data_area_verde', async (req, res) => {
   res.json(rows);
 })
 
+app.get('/api/comentarios', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+      SELECT
+      com.id_comentario,
+      com.comentario,
+      uv.nombre,
+      ar.id_area
+      FROM
+      comentario com JOIN area_verde ar ON com.id_area = ar.id_area
+      join unidad_vecinal uv on uv.id_unidad_vecinal = ar.id_unidad_vecinal;
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.');
+    }
+    res.json(data);
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message);
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message });
+  }
+})
+
 app.post('/api/register_user', async (req, res) => {
   try {
     const dataToRegister = {

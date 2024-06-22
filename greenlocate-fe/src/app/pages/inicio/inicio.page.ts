@@ -4,14 +4,14 @@ declare var google: any;
 
 import { Component, ElementRef, OnInit, Renderer2, ViewChild, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { MapComponent } from './map/inicio.page';
+//import { MapComponent } from './map/inicio.page';
 
 @Component({
     selector: 'app-inicio',
     templateUrl: './inicio.page.html',
     styleUrls: ['./inicio.page.scss'],
     standalone: true,
-    imports: [MapComponent],
+    //imports: [MapComponent],
 })
 export class InicioPage implements OnInit {
 

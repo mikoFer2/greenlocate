@@ -11,7 +11,11 @@ import { Router } from '@angular/router';
     templateUrl: './inicio.page.html',
     styleUrls: ['./inicio.page.scss'],
     standalone: true,
+<<<<<<< HEAD
  //   imports: [MapComponent],
+=======
+    //imports: [MapComponent],
+>>>>>>> main
 })
 export class InicioPage implements OnInit {
 

@@ -6,15 +6,15 @@ import { IonicModule } from '@ionic/angular';
 
 import { InicioPageRoutingModule } from './inicio-routing.module';
 
-import { InicioPage } from './InicioPage';
+//es un standalone no es necesario declararlo en ngmodule
+//import { InicioPage } from './inicio.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    InicioPageRoutingModule
-  ],
-  declarations: [InicioPage]
+    InicioPageRoutingModule,
+  ]
 })
 export class InicioPageModule {}

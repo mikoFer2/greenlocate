@@ -8,6 +8,14 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <ion-item>
+    <ion-label position="floating">ID Área</ion-label>
+    <ion-input  name="Id_area" required></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">ID Reseña</ion-label>
+    <ion-input  name="Id_resenia" required></ion-input>
+  </ion-item>
   <ion-list>
     <ion-item>
       <ion-select placeholder="Seleccione una nota">
@@ -20,4 +28,7 @@
       </ion-select>
     </ion-item>
   </ion-list>
+  <ion-button type="submit" expand="block" class="ion-margin-top">Añadir Calificación</ion-button>
+    <ion-button type="submit" expand="block" class="ion-margin-top">Cambiar Calificación</ion-button>
+    <ion-button type="submit" expand="block" class="ion-margin-top">Eliminar Calificación</ion-button>
 </ion-content>

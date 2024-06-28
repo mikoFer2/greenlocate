@@ -40,12 +40,44 @@ const routes: Routes = [
     loadChildren: () => import('./pages/cambio-contrasena/cambio-contrasena.module').then( m => m.CambioContrasenaPageModule)
   },
   {
-    path: '**',
-    loadChildren: () => import('./pages/error404/error404.module').then( m => m.Error404PageModule)
-  },
-  {
     path: 'inicio',
     loadChildren: () => import('./pages/inicio/inicio.module').then( m => m.InicioPageModule)
+  },
+  {
+    path: 'cancha',
+    loadChildren: () => import('./pages/cancha/cancha.module').then( m => m.CanchaPageModule)
+  },
+  {
+    path: 'balancin',
+    loadChildren: () => import('./pages/balancin/balancin.module').then( m => m.BalancinPageModule)
+  },
+  {
+    path: 'columpio',
+    loadChildren: () => import('./pages/columpio/columpio.module').then( m => m.ColumpioPageModule)
+  },
+  {
+    path: 'maquina',
+    loadChildren: () => import('./pages/maquina/maquina.module').then( m => m.MaquinaPageModule)
+  },
+  {
+    path: 'mesa',
+    loadChildren: () => import('./pages/mesa/mesa.module').then( m => m.MesaPageModule)
+  },
+  {
+    path: 'asiento',
+    loadChildren: () => import('./pages/asiento/asiento.module').then( m => m.AsientoPageModule)
+  },
+  {
+    path: 'pileta',
+    loadChildren: () => import('./pages/pileta/pileta.module').then( m => m.PiletaPageModule)
+  },
+  {
+    path: 'resbalin',
+    loadChildren: () => import('./pages/resbalin/resbalin.module').then( m => m.ResbalinPageModule)
+  },
+  {
+    path: '**',
+    loadChildren: () => import('./pages/error404/error404.module').then( m => m.Error404PageModule)
   },
 ];
 

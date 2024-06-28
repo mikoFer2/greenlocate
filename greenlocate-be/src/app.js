@@ -17,6 +17,7 @@ app.get('/get_data_area_verde', async (req, res) => {
   res.json(rows)
 })
 
+// comentarios (seleccionar)
 app.get('/api/comentarios', async (req, res) => {
   try {
     const INSERT_QUERY = 
@@ -43,6 +44,100 @@ app.get('/api/comentarios', async (req, res) => {
       res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
   }
 })
+
+// comentarios (registrar)
+app.post('/api/add_comment', async (req, res) => {
+  try {
+    const dataToRegister = {
+      Id_comentario: req.body.Id_comentario,
+      Comentario: req.body.Comentario,
+      Id_area: req.body.Id_area
+    }
+
+    const INSERT_QUERY = `
+      INSERT INTO comentario (Id_comentario, Comentario, Id_area) VALUES
+      (?, ?, ?)
+      `
+
+    const data = await pool.query(INSERT_QUERY, [
+      dataToRegister.Id_comentario, 
+      dataToRegister.Comentario,
+      dataToRegister.Id_area
+    ])
+
+    res.json({
+      data,
+      status: 'OK',
+      message: 'Comentario registrado correctamente!'
+    })
+
+  }catch (error){
+    console.error('Error al obtener datos de la base de datos:', error.message)
+    res.status(409).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// comentario (editar)
+app.put('/api/update_comentario', async (req, res) => {
+  try {
+    const dataToUpdate = {
+      Id_comentario: req.params.Id_comentario,
+      Comentario: req.body.Comentario,
+      Id_area: req.body.Id_area
+    };
+
+    const UPDATE_QUERY = `
+      UPDATE comentario SET Comentario = ?, Id_area = ? WHERE Id_comentario = ?
+    `;
+
+    const data = await pool.query(UPDATE_QUERY, [
+      dataToUpdate.Comentario,
+      dataToUpdate.Id_area,
+      dataToUpdate.Id_comentario
+    ]);
+
+    if (data.affectedRows === 0) {
+      return res.status(404).json({ message: 'Comentario no encontrado' });
+    }
+
+    res.json({
+      data,
+      status: 'OK',
+      message: 'Comentario actualizado correctamente!'
+    });
+
+  } catch (error) {
+    console.error('Error al actualizar datos de la base de datos:', error.message);
+    res.status(500).json({ message: 'Error al actualizar datos de la base de datos.', error: error.message });
+  }
+});
+
+// comentario (eliminar)
+app.delete('/api/delete_comentario', async (req, res) => {
+  try {
+    const { Id_comentario } = req.params;
+
+    const DELETE_QUERY = `
+      DELETE FROM comentario WHERE Id_comentario = ?
+    `;
+
+    const data = await pool.query(DELETE_QUERY, [Id_comentario]);
+
+    if (data.affectedRows === 0) {
+      return res.status(404).json({ message: 'Comentario no encontrado' });
+    }
+
+    res.json({
+      status: 'OK',
+      message: 'Comentario eliminado correctamente!'
+    });
+
+  } catch (error) {
+    console.error('Error al eliminar el comentario de la base de datos:', error.message);
+    res.status(500).json({ message: 'Error al eliminar el comentario de la base de datos.', error: error.message });
+  }
+});
+
 
 app.post('/api/register_user', async (req, res) => {
   try {
@@ -80,36 +175,6 @@ app.post('/api/register_user', async (req, res) => {
   }
 })
 
-app.post('/api/add_comment', async (req, res) => {
-  try {
-    const dataToRegister = {
-      Id_comentario: req.body.Id_comentario,
-      Comentario: req.body.Comentario,
-      Id_area: req.body.Id_area
-    }
-
-    const INSERT_QUERY = `
-      INSERT INTO comentario (Id_comentario, Comentario, Id_area) VALUES
-      (?, ?, ?)
-      `
-
-    const data = await pool.query(INSERT_QUERY, [
-      dataToRegister.Id_comentario, 
-      dataToRegister.Comentario,
-      dataToRegister.Id_area
-    ])
-
-    res.json({
-      data,
-      status: 'OK',
-      message: 'Comentario registrado correctamente!'
-    })
-
-  }catch (error){
-    console.error('Error al obtener datos de la base de datos:', error.message)
-    res.status(409).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
-  }
-})
 
 app.post('/api/get_pass', async (req, res) => {
   try {
@@ -172,3 +237,402 @@ app.get('/ping', async (req, res) => {
 
 app.listen(PORT)
 console.log('Server on port', PORT)
+
+// areas verdes
+app.get('/api/area_verdes', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    ar.id_area,
+    ar.tipo,
+    ar.tamano,
+    ar.estado,
+    ar.longitud,
+    ar.latitud,
+    uv.nombre as nombre_villa,
+    com.comentario,
+    ast.id_asiento,
+    ast.estado as Estado_asiento,
+    bal.id_balancin,
+    bal.estado,
+    can.id_area,
+    can.tipo,
+    can.metros_cuadrados,
+    can.estado,
+    col.id_columpio,
+    col.estado,
+    res.id_resenia,
+    res.calificacion,
+    maq.id_maquina,
+    maq.estado,
+    mes.id_mesa,
+    mes.estado,
+    resb.id_resbalin,
+    resb.estado,
+    pil.id_pileta,
+    pil.estado
+From
+    area_verde ar 
+    left join asiento ast ON ar.id_area = ast.id_areleft JOIN comentario com ON ar.id_area = com.id_area a 
+    left join unidad_vecinal uv on ar.id_unidad_vecinal = uv.id_unidad_vecinal
+    left join balancin bal on ar.id_area = bal.id_balancin
+    left join cancha can on ar.id_area = can.id_area
+    left join columpio col on ar.id_area = col.id_area
+    left join resenia res on ar.id_area = res.id_area
+    left join maquina_ejercicio maq on ar.id_area = maq.id_area
+    left join mesa_ping_pong mes on ar.id_area = mes.id_area
+    left join pileta pil on ar.id_area = pil.id_area
+    left join resbalin resb on ar.id_area = resb.id_area
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// usuarios (selecionar)
+app.get('/api/usuarios', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// usuarios (editar)
+app.put('/api/update_usuario', async (req, res) => {
+  try {
+    const dataToUpdate = {
+      rut: req.params.rut,
+      nombre: req.body.nombre,
+      apellido: req.body.apellido,
+      tipo: req.body.tipo || "n/a",
+      correo: req.body.email,
+      contrasena: req.body.contrasena,
+      idArea: req.body.idArea || "1111"
+    };
+
+    const UPDATE_QUERY = 'UPDATE `usuario` SET `Nombre` = ?, `Apellido` = ?, `Tipo` = ?, `Correo` = ?, `Contrasena` = ?, `Id_area` = ? WHERE `Rut` = ?';
+
+    const data = await pool.query(UPDATE_QUERY, [
+      dataToUpdate.nombre,
+      dataToUpdate.apellido,
+      dataToUpdate.tipo,
+      dataToUpdate.correo,
+      dataToUpdate.contrasena,
+      dataToUpdate.idArea,
+      dataToUpdate.rut
+    ]);
+
+    if (data.affectedRows === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.json({
+      data,
+      status: 'OK',
+      message: 'Usuario, ' + dataToUpdate.nombre + ' actualizado correctamente!'
+    });
+
+  } catch (error) {
+    console.error('Error al actualizar datos de la base de datos:', error.message);
+    res.status(500).json({ message: 'Error al actualizar datos de la base de datos.', error: error.message });
+  }
+});
+
+// reseñas
+app.get('/api/resenias', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// balacin
+app.get('/api/balancin', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// asientos
+app.get('/api/asientos', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// columpio
+app.get('/api/columpio', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// cancha
+app.get('/api/cancha', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// mesa de ping pong
+app.get('/api/mesa', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// maquina ejercicio
+app.get('/api/maquina', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// pileta
+app.get('/api/pileta', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// resbalin
+app.get('/api/resbalin', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})
+
+// unidad vecinal (villa)
+app.get('/api/villa', async (req, res) => {
+  try {
+    const INSERT_QUERY = 
+    `
+    SELECT
+    rut,
+    nombre,
+    apellido,
+    correo
+FROM
+    usuario
+    `
+    const data = await pool.query(INSERT_QUERY)
+      
+    //Se valida existencia de data en servidor
+    if (data[0].length === 0) {
+        throw new Error('No se encontraron datos en la base de datos.')
+    }
+    res.json(data)
+
+  } catch (error) {
+      console.error('Error al obtener datos de la base de datos:', error.message)
+      res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
+  }
+})

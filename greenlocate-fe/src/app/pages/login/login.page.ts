@@ -48,7 +48,7 @@ export class LoginPage {
         this.router.navigate(['/inicio']);
       } else {
         const alert = await this.alertController.create({
-          header: 'Login Failed',
+          header: 'Login Fallado',
           message: 'Invalid username or password.',
           buttons: ['OK']
         });
@@ -58,7 +58,7 @@ export class LoginPage {
     } catch (error) {
       console.error('Error al validar contrasena desde el servicio:', error);
       const alert = await this.alertController.create({
-        header: 'Login Failed',
+        header: 'Login Fallado',
         message: 'Invalid username or password.',
         buttons: ['OK']
       });

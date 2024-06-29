@@ -70,7 +70,7 @@ export class RegistroPage {
       this.router.navigate(['/inicio']);
     } else if(response.status == 'NOK') {
       const alert = await this.alertController.create({
-        header: 'registro Fallido',
+        header: 'Registro Fallido',
         message: 'Error al registrar usuario desde el servidor.',
         buttons: ['OK']
       });
@@ -78,7 +78,7 @@ export class RegistroPage {
       await alert.present();
     } else {
       const alert = await this.alertController.create({
-        header: 'registro Fallido',
+        header: 'Registro Fallido',
         message: 'Invalid form.',
         buttons: ['OK']
       });

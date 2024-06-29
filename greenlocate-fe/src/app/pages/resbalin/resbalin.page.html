@@ -5,9 +5,22 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">resbalin</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <form>
+    <ion-item>
+      <ion-label position="floating">ID Resbalín</ion-label>
+      <ion-input  name="Id_Resbalín" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Estado</ion-label>
+      <ion-input  name="Id_Estador" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Id Area Verde</ion-label>
+      <ion-input  name="Id_Area" required></ion-input>
+    </ion-item>
+    <ion-button type="submit" expand="block" class="ion-margin-top">Añadir Resbalín</ion-button>
+    <ion-button type="submit" expand="block" class="ion-margin-top">Editar Resbalín</ion-button>
+    <ion-button type="submit" expand="block" class="ion-margin-top">Eliminar Resbalín</ion-button>
+    <ion-button (click)="volver()" type="submit" expand="block" class="ion-margin-top">Volver</ion-button>
+  </form>
 </ion-content>

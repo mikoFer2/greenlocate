@@ -7,15 +7,20 @@
 <ion-content [fullscreen]="true">
   <form>
     <ion-item>
-      <ion-label position="floating">ID columpio</ion-label>
+      <ion-label position="floating">ID Columpio</ion-label>
       <ion-input  name="Id_columbio" required></ion-input>
     </ion-item>
     <ion-item>
       <ion-label position="floating">Estado</ion-label>
-      <ion-input  name="Id_comentario" required></ion-input>
+      <ion-input  name="Id_Estadoc" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Id Area Verde</ion-label>
+      <ion-input  name="Id_Area" required></ion-input>
     </ion-item>
     <ion-button type="submit" expand="block" class="ion-margin-top">Añadir Columpio</ion-button>
     <ion-button type="submit" expand="block" class="ion-margin-top">Editar Columpio</ion-button>
     <ion-button type="submit" expand="block" class="ion-margin-top">Eliminar Columpio</ion-button>
+    <ion-button (click)="volver()" type="submit" expand="block" class="ion-margin-top">Volver</ion-button>
   </form>
 </ion-content>

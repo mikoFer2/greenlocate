@@ -301,7 +301,7 @@ INSERT INTO `area_verde` (`Id_area`, `Tipo`, `Tamano`, `Estado`, `Longitud`, `La
 --
 
 CREATE TABLE `asiento` (
-  `Id_asiento` varchar(6) NOT NULL,
+  `Id_asiento` int(6) NOT NULL,
   `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -325,7 +325,7 @@ INSERT INTO `asiento` (`Id_asiento`, `Estado`, `Id_area`) VALUES
 --
 
 CREATE TABLE `balancin` (
-  `Id_balancin` varchar(6) NOT NULL,
+  `Id_balancin` int(6) NOT NULL,
   `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -347,7 +347,7 @@ INSERT INTO `balancin` (`Id_balancin`, `Estado`, `Id_area`) VALUES
 --
 
 CREATE TABLE `cancha` (
-  `Id_cancha` varchar(6) NOT NULL,
+  `Id_cancha` int(6) NOT NULL,
   `Nombre` varchar(20) NOT NULL,
   `Tipo` varchar(10) NOT NULL,
   `Metros_Cuadrados` int(6) NOT NULL,
@@ -372,7 +372,7 @@ INSERT INTO `cancha` (`Id_cancha`, `Nombre`, `Tipo`, `Metros_Cuadrados`, `Estado
 --
 
 CREATE TABLE `columpio` (
-  `Id_columpio` varchar(6) NOT NULL,
+  `Id_columpio` int(6) NOT NULL,
   `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -394,7 +394,7 @@ INSERT INTO `columpio` (`Id_columpio`, `Estado`, `Id_area`) VALUES
 --
 
 CREATE TABLE `comentario` (
-  `Id_comentario` varchar(12) NOT NULL,
+  `Id_comentario` int(12) NOT NULL,
   `Comentario` varchar(500) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -484,7 +484,7 @@ INSERT INTO `comuna` (`Id_comuna`, `Nombre`, `Id_provincia`) VALUES
 --
 
 CREATE TABLE `maquina_ejercicio` (
-  `Id_maquina` varchar(6) NOT NULL,
+  `Id_maquina` int(6) NOT NULL,
   `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -506,7 +506,7 @@ INSERT INTO `maquina_ejercicio` (`Id_maquina`, `Estado`, `Id_area`) VALUES
 --
 
 CREATE TABLE `mesa_ping_pong` (
-  `Id_mesa` varchar(6) NOT NULL,
+  `Id_mesa` int(6) NOT NULL,
   `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -525,7 +525,7 @@ INSERT INTO `mesa_ping_pong` (`Id_mesa`, `Estado`, `Id_area`) VALUES
 --
 
 CREATE TABLE `pileta` (
-  `Id_pileta` varchar(6) NOT NULL,
+  `Id_pileta` int(6) NOT NULL,
   `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -601,7 +601,7 @@ INSERT INTO `region` (`Id_region`, `Nombre`) VALUES
 --
 
 CREATE TABLE `resbalin` (
-  `Id_resbalin` varchar(6) NOT NULL,
+  `Id_resbalin` int(6) NOT NULL,
   `Estado` varchar(10) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -623,7 +623,7 @@ INSERT INTO `resbalin` (`Id_resbalin`, `Estado`, `Id_area`) VALUES
 --
 
 CREATE TABLE `resenia` (
-  `Id_resenia` varchar(12) NOT NULL,
+  `Id_resenia` int(12) NOT NULL,
   `Calificacion` int(2) NOT NULL,
   `Id_area` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

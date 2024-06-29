@@ -239,6 +239,7 @@ app.listen(PORT)
 console.log('Server on port', PORT)
 
 // areas verdes
+
 app.get('/api/area_verdes', async (req, res) => {
   try {
     const INSERT_QUERY = 
@@ -297,9 +298,10 @@ From
       console.error('Error al obtener datos de la base de datos:', error.message)
       res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
   }
-})
+});
 
 // usuarios (selecionar)
+
 app.get('/api/usuarios', async (req, res) => {
   try {
     const INSERT_QUERY = 
@@ -324,9 +326,10 @@ FROM
       console.error('Error al obtener datos de la base de datos:', error.message)
       res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
   }
-})
+});
 
 // usuarios (editar)
+
 app.put('/api/update_usuario', async (req, res) => {
   try {
     const dataToUpdate = {
@@ -367,18 +370,28 @@ app.put('/api/update_usuario', async (req, res) => {
   }
 });
 
-// reseñas
+// reseñas (seleccionar)
 app.get('/api/resenias', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
     SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
-FROM
-    usuario
+    ar.id_area,
+    ar.tipo,
+    ar.tamano,
+    ar.estado,
+    ar.longitud,
+    ar.latitud,
+    avg(res.calificacion)   
+From
+    area_verde ar join resenia res on ar.id_area = res.id_area
+    GROUP BY ar.id_area,
+    ar.tipo,
+    ar.tamano,
+    ar.estado,
+    ar.longitud,
+    ar.latitud
+;
     `
     const data = await pool.query(INSERT_QUERY)
       
@@ -392,20 +405,102 @@ FROM
       console.error('Error al obtener datos de la base de datos:', error.message)
       res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
   }
-})
+});
 
-// balacin
+// reseña (editar)
+
+app.put('/api/update_resenias', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { calificacion } = req.body;
+    
+    if (!calificacion) {
+      return res.status(400).json({ message: 'Por favor, proporcione todos los campos necesarios.' });
+    }
+    
+    const UPDATE_QUERY = `
+      UPDATE resenia
+      SET calificacion = ?
+      WHERE id_resenia = ?
+    `;
+    
+    const [result] = await pool.query(UPDATE_QUERY, [calificacion, comentario, id]);
+    
+    if (result.affectedRows === 0) {
+      throw new Error('No se encontró la reseña con el ID proporcionado.');
+    }
+    
+    res.json({ message: 'Reseña actualizada correctamente.' });
+  } catch (error) {
+    console.error('Error al actualizar la reseña:', error.message);
+    res.status(500).json({ message: 'Error al actualizar la reseña.', error: error.message });
+  }
+});
+
+// reseña (eliminar)
+
+app.delete('/api/delete_resenias', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const DELETE_QUERY = `
+      DELETE FROM resenia
+      WHERE id_resenia = ?
+    `;
+    
+    const [result] = await pool.query(DELETE_QUERY, [id]);
+    
+    if (result.affectedRows === 0) {
+      throw new Error('No se encontró la reseña con el ID proporcionado.');
+    }
+    
+    res.json({ message: 'Reseña eliminada correctamente.' });
+  } catch (error) {
+    console.error('Error al eliminar la reseña:', error.message);
+    res.status(500).json({ message: 'Error al eliminar la reseña.', error: error.message });
+  }
+});
+
+// reseña (Crear)
+
+app.post('/api/resenias', async (req, res) => {
+  try {
+    const { id_area, calificacion } = req.body;
+    
+    if (!id_area || !calificacion) {
+      return res.status(400).json({ message: 'Por favor, proporcione todos los campos necesarios.' });
+    }
+    
+    const INSERT_QUERY = `
+      INSERT INTO resenia (id_area, calificacion)
+      VALUES (?, ?)
+    `;
+    
+    const [result] = await pool.query(INSERT_QUERY, [id_area, calificacion]);
+    
+    res.json({ message: 'Reseña creada correctamente.', id_resenia: result.insertId });
+  } catch (error) {
+    console.error('Error al crear la reseña:', error.message);
+    res.status(500).json({ message: 'Error al crear la reseña.', error: error.message });
+  }
+});
+
+// balacin (seleccionar)
+
 app.get('/api/balancin', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
     SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
+    uv.nombre,
+    ar.id_area,
+    ar.longitud,
+    ar.latitud,
+    bal.id_balancin,
+    bal.estado
 FROM
-    usuario
+    balancin bal JOIN area_verde ar ON ar.id_area = bal.id_area
+    join unidad_vecinal uv on ar.id_unidad_vecinal = uv.id_unidad_vecinal;
     `
     const data = await pool.query(INSERT_QUERY)
       
@@ -419,20 +514,78 @@ FROM
       console.error('Error al obtener datos de la base de datos:', error.message)
       res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
   }
-})
+});
 
-// asientos
+// Balancin (Crear)
+
+app.post('/api/crear_balancin', async (req, res) => {
+  try {
+    const { id_area, id_balancin, estado } = req.body;
+    const INSERT_QUERY = `
+      INSERT INTO balancin (id_area, id_balancin, estado)
+      VALUES (?, ?, ?);
+    `;
+    
+    await pool.query(INSERT_QUERY, [id_area, id_balancin, estado]);
+    res.status(201).json({ message: 'Dato insertado exitosamente.' });
+  } catch (error) {
+    console.error('Error al insertar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al insertar dato en la base de datos.', error: error.message });
+  }
+});
+
+// Balancin (Editar)
+
+app.put('/api/update_balancin', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_area, id_balancin, estado } = req.body;
+    const UPDATE_QUERY = `
+      UPDATE balancin
+      SET id_area = ?, id_balancin = ?, estado = ?
+      WHERE id_balancin = ?;
+    `;
+    
+    await pool.query(UPDATE_QUERY, [id_area, id_balancin, estado, id]);
+    res.json({ message: 'Dato actualizado exitosamente.' });
+  } catch (error) {
+    console.error('Error al actualizar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al actualizar dato en la base de datos.', error: error.message });
+  }
+});
+
+// Balancin (Eliminar)
+app.delete('/api/delete_balancin', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DELETE_QUERY = `
+      DELETE FROM balancin
+      WHERE id_balancin = ?;
+    `;
+    
+    await pool.query(DELETE_QUERY, [id]);
+    res.json({ message: 'Dato eliminado exitosamente.' });
+  } catch (error) {
+    console.error('Error al eliminar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al eliminar dato en la base de datos.', error: error.message });
+  }
+});
+
+// asientos (selecionar)
 app.get('/api/asientos', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
     SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
+    uv.nombre,
+    ar.id_area,
+    ar.longitud,
+    ar.latitud,
+    ast.id_asiento,
+    ast.estado
 FROM
-    usuario
+    asiento ast JOIN area_verde ar ON ar.id_area = ast.id_area
+    join unidad_vecinal uv on ar.id_unidad_vecinal = uv.id_unidad_vecinal;
     `
     const data = await pool.query(INSERT_QUERY)
       
@@ -446,20 +599,80 @@ FROM
       console.error('Error al obtener datos de la base de datos:', error.message)
       res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
   }
-})
+});
 
-// columpio
+// asientos (Crear)
+
+app.post('/api/crear_asiento', async (req, res) => {
+  try {
+    const { id_area, id_asiento, estado } = req.body;
+    const INSERT_QUERY = `
+      INSERT INTO asiento (id_area, id_asiento, estado)
+      VALUES (?, ?, ?);
+    `;
+    
+    await pool.query(INSERT_QUERY, [id_area, id_asiento, estado]);
+    res.status(201).json({ message: 'Dato insertado exitosamente.' });
+  } catch (error) {
+    console.error('Error al insertar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al insertar dato en la base de datos.', error: error.message });
+  }
+});
+
+// asientos (editar)
+
+app.put('/api/update_asiento', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_area, id_asiento, estado } = req.body;
+    const UPDATE_QUERY = `
+      UPDATE asiento
+      SET id_area = ?, id_asiento = ?, estado = ?
+      WHERE id_asiento = ?;
+    `;
+    
+    await pool.query(UPDATE_QUERY, [id_area, id_asiento, estado, id]);
+    res.json({ message: 'Dato actualizado exitosamente.' });
+  } catch (error) {
+    console.error('Error al actualizar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al actualizar dato en la base de datos.', error: error.message });
+  }
+});
+
+// asientos (eliminar)
+
+app.delete('/api/delete_asiento', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DELETE_QUERY = `
+      DELETE FROM asiento
+      WHERE id_asiento = ?;
+    `;
+    
+    await pool.query(DELETE_QUERY, [id]);
+    res.json({ message: 'Dato eliminado exitosamente.' });
+  } catch (error) {
+    console.error('Error al eliminar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al eliminar dato en la base de datos.', error: error.message });
+  }
+});
+
+// columpio (selecionar)
+
 app.get('/api/columpio', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
     SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
+    uv.nombre,
+    ar.id_area,
+    ar.longitud,
+    ar.latitud,
+    col.id_columpio,
+    col.estado
 FROM
-    usuario
+    columpio col JOIN area_verde ar ON ar.id_area = col.id_area
+    join unidad_vecinal uv on ar.id_unidad_vecinal = uv.id_unidad_vecinal;
     `
     const data = await pool.query(INSERT_QUERY)
       
@@ -473,20 +686,82 @@ FROM
       console.error('Error al obtener datos de la base de datos:', error.message)
       res.status(401).json({ message: 'Error al obtener datos de la base de datos.', error: error.message })
   }
-})
+});
 
-// cancha
+// columpio (crear)
+
+app.post('/api/crear_columpio', async (req, res) => {
+  try {
+    const { id_area, id_columpio, estado } = req.body;
+    const INSERT_QUERY = `
+      INSERT INTO columpio (id_area, id_columpio, estado)
+      VALUES (?, ?, ?);
+    `;
+    
+    await pool.query(INSERT_QUERY, [id_area, id_columpio, estado]);
+    res.status(201).json({ message: 'Dato insertado exitosamente.' });
+  } catch (error) {
+    console.error('Error al insertar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al insertar dato en la base de datos.', error: error.message });
+  }
+});
+
+// columpio (editar)
+
+app.put('/api/update_columpio', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_area, id_columpio, estado } = req.body;
+    const UPDATE_QUERY = `
+      UPDATE columpio
+      SET id_area = ?, id_columpio = ?, estado = ?
+      WHERE id_columpio = ?;
+    `;
+    
+    await pool.query(UPDATE_QUERY, [id_area, id_columpio, estado, id]);
+    res.json({ message: 'Dato actualizado exitosamente.' });
+  } catch (error) {
+    console.error('Error al actualizar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al actualizar dato en la base de datos.', error: error.message });
+  }
+});
+
+// columpio (eliminar)
+
+app.delete('/api/delete_columpio', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DELETE_QUERY = `
+      DELETE FROM columpio
+      WHERE id_columpio = ?;
+    `;
+    
+    await pool.query(DELETE_QUERY, [id]);
+    res.json({ message: 'Dato eliminado exitosamente.' });
+  } catch (error) {
+    console.error('Error al eliminar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al eliminar dato en la base de datos.', error: error.message });
+  }
+});
+
+// cancha (seleccionar)
+
 app.get('/api/cancha', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
-    SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
+    uv.nombre,
+    ar.id_area,
+    ar.longitud,
+    ar.latitud,
+    can.id_cancha,
+    can.nombre,
+    can.tipo,
+    can.metros_cuadrados,
+    can.estado
 FROM
-    usuario
+    cancha can JOIN area_verde ar ON ar.id_area = can.id_area
+    join unidad_vecinal uv on ar.id_unidad_vecinal = uv.id_unidad_vecinal;
     `
     const data = await pool.query(INSERT_QUERY)
       
@@ -502,18 +777,78 @@ FROM
   }
 })
 
-// mesa de ping pong
+// cancha (crear)
+
+app.post('/api/crear_cancha', async (req, res) => {
+  try {
+    const { id_area, id_cancha, nombre, tipo, metros_cuadrados, estado } = req.body;
+    const INSERT_QUERY = `
+      INSERT INTO cancha (id_area, id_cancha, nombre, tipo, metros_cuadrados, estado)
+      VALUES (?, ?, ?, ?, ?, ?);
+    `;
+    
+    await pool.query(INSERT_QUERY, [id_area, id_cancha, nombre, tipo, metros_cuadrados, estado]);
+    res.status(201).json({ message: 'Dato insertado exitosamente.' });
+  } catch (error) {
+    console.error('Error al insertar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al insertar dato en la base de datos.', error: error.message });
+  }
+});
+
+// cancha (editar)
+
+app.put('/api/update_cancha', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_area, nombre, tipo, metros_cuadrados, estado } = req.body;
+    const UPDATE_QUERY = `
+      UPDATE cancha
+      SET id_area = ?, nombre = ?, tipo = ?, metros_cuadrados = ?, estado = ?
+      WHERE id_cancha = ?;
+    `;
+    
+    await pool.query(UPDATE_QUERY, [id_area, nombre, tipo, metros_cuadrados, estado, id]);
+    res.json({ message: 'Dato actualizado exitosamente.' });
+  } catch (error) {
+    console.error('Error al actualizar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al actualizar dato en la base de datos.', error: error.message });
+  }
+});
+
+// cancha (eliminar)
+
+app.delete('/api/delete_cancha', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DELETE_QUERY = `
+      DELETE FROM cancha
+      WHERE id_cancha = ?;
+    `;
+    
+    await pool.query(DELETE_QUERY, [id]);
+    res.json({ message: 'Dato eliminado exitosamente.' });
+  } catch (error) {
+    console.error('Error al eliminar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al eliminar dato en la base de datos.', error: error.message });
+  }
+});
+
+// mesa de ping pong (seleccionar)
+
 app.get('/api/mesa', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
     SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
+    uv.nombre,
+    ar.id_area,
+    ar.longitud,
+    ar.latitud,
+    mes.id_mesa,
+    mes.estado
 FROM
-    usuario
+    mesa_ping_pong mes JOIN area_verde ar ON ar.id_area = mes.id_area
+    join unidad_vecinal uv on ar.id_unidad_vecinal = uv.id_unidad_vecinal;
     `
     const data = await pool.query(INSERT_QUERY)
       
@@ -529,18 +864,78 @@ FROM
   }
 })
 
-// maquina ejercicio
+// mesa de ping pong (crear)
+
+app.post('/api/crear_mesa', async (req, res) => {
+  try {
+    const { id_area, id_mesa, estado } = req.body;
+    const INSERT_QUERY = `
+      INSERT INTO mesa_ping_pong (id_area, id_mesa, estado)
+      VALUES (?, ?, ?);
+    `;
+    
+    await pool.query(INSERT_QUERY, [id_area, id_mesa, estado]);
+    res.status(201).json({ message: 'Dato insertado exitosamente.' });
+  } catch (error) {
+    console.error('Error al insertar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al insertar dato en la base de datos.', error: error.message });
+  }
+});
+
+// mesa de ping pong (editar)
+
+app.put('/api/update_mesa', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_area, id_mesa, estado } = req.body;
+    const UPDATE_QUERY = `
+      UPDATE mesa_ping_pong
+      SET id_area = ?, id_mesa = ?, estado = ?
+      WHERE id_mesa = ?;
+    `;
+    
+    await pool.query(UPDATE_QUERY, [id_area, id_mesa, estado, id]);
+    res.json({ message: 'Dato actualizado exitosamente.' });
+  } catch (error) {
+    console.error('Error al actualizar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al actualizar dato en la base de datos.', error: error.message });
+  }
+});
+
+// mesa de ping pong (eliminar)
+
+app.delete('/api/delete_mesa', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DELETE_QUERY = `
+      DELETE FROM mesa_ping_pong
+      WHERE id_mesa = ?;
+    `;
+    
+    await pool.query(DELETE_QUERY, [id]);
+    res.json({ message: 'Dato eliminado exitosamente.' });
+  } catch (error) {
+    console.error('Error al eliminar dato en la base de datos:', error.message);
+    res.status(401).json({ message: 'Error al eliminar dato en la base de datos.', error: error.message });
+  }
+});
+
+// maquina ejercicio (seleccionar)
+
 app.get('/api/maquina', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
     SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
+    uv.nombre,
+    ar.id_area,
+    ar.longitud,
+    ar.latitud,
+    maq.id_maquina,
+    maq.estado
 FROM
-    usuario
+    maquina_ejercicio maq JOIN area_verde ar ON ar.id_area = maq.id_area
+    join unidad_vecinal uv on ar.id_unidad_vecinal = uv.id_unidad_vecinal;
     `
     const data = await pool.query(INSERT_QUERY)
       
@@ -556,18 +951,82 @@ FROM
   }
 })
 
-// pileta
+// maquina ejercicio (crear)
+
+app.post('/api/crear_maquina', async (req, res) => {
+  try {
+    const { id_area, id_maquina, estado } = req.body;
+    const INSERT_QUERY = `
+      INSERT INTO maquina_ejercicio (id_area, id_maquina, estado)
+      VALUES (?, ?, ?)
+    `;
+    const result = await pool.query(INSERT_QUERY, [id_area, id_maquina, estado]);
+    res.json({ message: 'Registro creado correctamente.', affectedRows: result.affectedRows });
+  } catch (error) {
+    console.error('Error al crear registro:', error.message);
+    res.status(500).json({ message: 'Error al crear registro.', error: error.message });
+  }
+});
+
+// maquina ejercicio (editar)
+
+app.put('/api/update_maquina', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_area, id_maquina, estado } = req.body;
+    const UPDATE_QUERY = `
+      UPDATE maquina_ejercicio
+      SET id_area = ?, id_maquina = ?, estado = ?
+      WHERE id = ?
+    `;
+    const result = await pool.query(UPDATE_QUERY, [id_area, id_maquina, estado, id]);
+    if (result.changedRows === 0) {
+      throw new Error('No se encontró el registro para actualizar.');
+    }
+    res.json({ message: 'Registro actualizado correctamente.', affectedRows: result.affectedRows });
+  } catch (error) {
+    console.error('Error al actualizar registro:', error.message);
+    res.status(500).json({ message: 'Error al actualizar registro.', error: error.message });
+  }
+});
+
+// maquina ejercicio (eliminar)
+
+app.delete('/api/delte_maquina', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DELETE_QUERY = `
+      DELETE FROM maquina_ejercicio
+      WHERE id = ?
+    `;
+    const result = await pool.query(DELETE_QUERY, [id]);
+    if (result.affectedRows === 0) {
+      throw new Error('No se encontró el registro para eliminar.');
+    }
+    res.json({ message: 'Registro eliminado correctamente.', affectedRows: result.affectedRows });
+  } catch (error) {
+    console.error('Error al eliminar registro:', error.message);
+    res.status(500).json({ message: 'Error al eliminar registro.', error: error.message });
+  }
+});
+
+// pileta (Seleccionar)
+
 app.get('/api/pileta', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
     SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
+    uv.nombre,
+    ar.id_area,
+    ar.longitud,
+    ar.latitud,
+    pil.id_pileta,
+    pil.estado
 FROM
-    usuario
+    pileta pil JOIN area_verde ar ON ar.id_area = pil.id_area
+    join unidad_vecinal uv on ar.id_unidad_vecinal = uv.id_unidad_vecinal;
+    
     `
     const data = await pool.query(INSERT_QUERY)
       
@@ -583,18 +1042,81 @@ FROM
   }
 })
 
-// resbalin
+// pileta (crear)
+
+app.post('/api/crear_pileta', async (req, res) => {
+  try {
+    const { id_area, id_pileta, estado } = req.body;
+    const INSERT_QUERY = `
+      INSERT INTO pileta (id_area, id_pileta, estado)
+      VALUES (?, ?, ?)
+    `;
+    const result = await pool.query(INSERT_QUERY, [id_area, id_pileta, estado]);
+    res.json({ message: 'Registro creado correctamente.', affectedRows: result.affectedRows });
+  } catch (error) {
+    console.error('Error al crear registro:', error.message);
+    res.status(500).json({ message: 'Error al crear registro.', error: error.message });
+  }
+});
+
+// pileta (editar)
+
+app.put('/api/update_pileta', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_area, id_pileta, estado } = req.body;
+    const UPDATE_QUERY = `
+      UPDATE pileta
+      SET id_area = ?, id_pileta = ?, estado = ?
+      WHERE id = ?
+    `;
+    const result = await pool.query(UPDATE_QUERY, [id_area, id_pileta, estado, id]);
+    if (result.changedRows === 0) {
+      throw new Error('No se encontró el registro para actualizar.');
+    }
+    res.json({ message: 'Registro actualizado correctamente.', affectedRows: result.affectedRows });
+  } catch (error) {
+    console.error('Error al actualizar registro:', error.message);
+    res.status(500).json({ message: 'Error al actualizar registro.', error: error.message });
+  }
+});
+
+// pileta (eliminar)
+
+app.delete('/api/delete_pileta', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DELETE_QUERY = `
+      DELETE FROM pileta
+      WHERE id = ?
+    `;
+    const result = await pool.query(DELETE_QUERY, [id]);
+    if (result.affectedRows === 0) {
+      throw new Error('No se encontró el registro para eliminar.');
+    }
+    res.json({ message: 'Registro eliminado correctamente.', affectedRows: result.affectedRows });
+  } catch (error) {
+    console.error('Error al eliminar registro:', error.message);
+    res.status(500).json({ message: 'Error al eliminar registro.', error: error.message });
+  }
+});
+
+// resbalin (seleccionar)
+
 app.get('/api/resbalin', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
     SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
+    uv.nombre,
+    ar.id_area,
+    ar.longitud,
+    ar.latitud,
+    resb.id_resbalin,
+    resb.estado
 FROM
-    usuario
+    resbalin resb JOIN area_verde ar ON ar.id_area = resb.id_area
+    join unidad_vecinal uv on ar.id_unidad_vecinal = uv.id_unidad_vecinal;
     `
     const data = await pool.query(INSERT_QUERY)
       
@@ -610,18 +1132,78 @@ FROM
   }
 })
 
-// unidad vecinal (villa)
+// resbalin (crear)
+
+app.post('/api/crear_resbalin', async (req, res) => {
+  try {
+    const { id_area, id_resbalin, estado } = req.body;
+    const INSERT_QUERY = `
+      INSERT INTO resbalin (id_area, id_resbalin, estado)
+      VALUES (?, ?, ?)
+    `;
+    const result = await pool.query(INSERT_QUERY, [id_area, id_resbalin, estado]);
+    res.json({ message: 'Registro creado correctamente.', affectedRows: result.affectedRows });
+  } catch (error) {
+    console.error('Error al crear registro:', error.message);
+    res.status(500).json({ message: 'Error al crear registro.', error: error.message });
+  }
+});
+
+// resbalin (editar)
+
+app.put('/api/update_resbalin', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_area, id_resbalin, estado } = req.body;
+    const UPDATE_QUERY = `
+      UPDATE resbalin
+      SET id_area = ?, id_resbalin = ?, estado = ?
+      WHERE id = ?
+    `;
+    const result = await pool.query(UPDATE_QUERY, [id_area, id_resbalin, estado, id]);
+    if (result.changedRows === 0) {
+      throw new Error('No se encontró el registro para actualizar.');
+    }
+    res.json({ message: 'Registro actualizado correctamente.', affectedRows: result.affectedRows });
+  } catch (error) {
+    console.error('Error al actualizar registro:', error.message);
+    res.status(500).json({ message: 'Error al actualizar registro.', error: error.message });
+  }
+});
+
+// resbalin (eliminar)
+
+app.delete('/api/delete_resbalin', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DELETE_QUERY = `
+      DELETE FROM resbalin
+      WHERE id = ?
+    `;
+    const result = await pool.query(DELETE_QUERY, [id]);
+    if (result.affectedRows === 0) {
+      throw new Error('No se encontró el registro para eliminar.');
+    }
+    res.json({ message: 'Registro eliminado correctamente.', affectedRows: result.affectedRows });
+  } catch (error) {
+    console.error('Error al eliminar registro:', error.message);
+    res.status(500).json({ message: 'Error al eliminar registro.', error: error.message });
+  }
+});
+
+// unidad vecinal (seleccionar)
+
 app.get('/api/villa', async (req, res) => {
   try {
     const INSERT_QUERY = 
     `
     SELECT
-    rut,
-    nombre,
-    apellido,
-    correo
+    uv.nombre,
+    ar.id_area,
+    ar.longitud,
+    ar.latitud
 FROM
-    usuario
+    unidad_vecinal uv JOIN area_verde ar on ar.id_unidad_vecinal = uv.id_unidad_vecinal;
     `
     const data = await pool.query(INSERT_QUERY)
       
